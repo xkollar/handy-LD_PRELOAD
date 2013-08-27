@@ -9,8 +9,3 @@ liblogresolve.so: logresolve.c liblogresolve.version
 
 libstealcursor.so: stealcursor.c
 	$(CC) $(CFLAGS) -o $@ $<
-
-# libkwak.so: kwak.c libkwak.version Makefile
-# 	gcc -D_GNU_SOURCE -Wall -O2 -fpic -shared -ldl -o libkwak.so kwak.c \
-# 		-fvisibility=hidden \
-#         	-Wl,--version-script=libkwak.version
