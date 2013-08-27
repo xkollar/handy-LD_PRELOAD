@@ -6,6 +6,9 @@
 
 #undef getaddrinfo
 
+// Helpers:
+
+__attribute__((visibility("internal")))
 FILE *__my_fopen_log()
 {
 	static FILE *file = NULL;
@@ -20,6 +23,18 @@ FILE *__my_fopen_log()
 	return file;
 }
 
+__attribute__((visibility("internal")))
+void *__my_loadfun(const char *symbol)
+{
+	char *error;
+	void *ret = dlsym(RTLD_NEXT, symbol);
+	if ((error = dlerror()) != NULL) {
+		fprintf(stderr, "dlsym: %s\n", error);
+		exit(EXIT_FAILURE);
+	}
+	return ret;
+}
+
 // Overrides:
 
 __attribute__((visibility("default")))
@@ -29,12 +44,7 @@ struct hostent *gethostbyname(const char *name)
 		(const char *name) = NULL;
 	static FILE *file = NULL;
         if (!lib_gethostbyname) {
-		char *error;
-		lib_gethostbyname = dlsym(RTLD_NEXT, "gethostbyname");
-		if ((error = dlerror()) != NULL) {
-			fprintf(stderr, "dlsym: %s\n", error);
-			exit(EXIT_FAILURE);
-		}
+		lib_gethostbyname = __my_loadfun("gethostbyname");
 	}
         if (!file) {
 		file = __my_fopen_log();
@@ -55,12 +65,7 @@ int getaddrinfo(const char *node, const char *service,
                 struct addrinfo **res) = NULL;
 	static FILE *file = NULL;
 	if (!lib_getaddrinfo) {
-		char *error;
-		lib_getaddrinfo = dlsym(RTLD_NEXT, "getaddrinfo");
-		if ((error = dlerror()) != NULL) {
-			fprintf(stderr, "dlsym: %s\n", error);
-			exit(EXIT_FAILURE);
-		}
+		lib_getaddrinfo = __my_loadfun("getaddrinfo");
 	}
         if (!file) {
 		file = __my_fopen_log();
