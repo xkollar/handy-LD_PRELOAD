@@ -3,13 +3,15 @@
 #include <dlfcn.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <netinet/in.h>
+
 
 #undef getaddrinfo
 
 // Internal helpers:
 
 __attribute__((visibility("internal")))
-FILE *__my_flog()
+FILE *__my_getlog()
 {
 	static FILE *file = NULL;
         if (!file) {
@@ -46,7 +48,7 @@ struct hostent *gethostbyname(const char *name)
         if (!lib_gethostbyname) {
 		lib_gethostbyname = __my_loadfun("gethostbyname");
 	}
-	fprintf(__my_flog(), "Process %d is resolving (gethostbyname): %s\n",
+	fprintf(__my_getlog(), "Process %d is resolving (gethostbyname): %s\n",
 		getpid(), name);
 	return lib_gethostbyname(name);
 	
@@ -60,11 +62,29 @@ int getaddrinfo(const char *node, const char *service,
         static int (*lib_getaddrinfo) (const char *node, const char *service,
                 const struct addrinfo *hints,
                 struct addrinfo **res) = NULL;
+	static FILE *file = NULL;
+	int ret;
+
 	if (!lib_getaddrinfo) {
 		lib_getaddrinfo = __my_loadfun("getaddrinfo");
 	}
-	fprintf(__my_flog(), "Process %d is resolving (getaddrinfo): %s\n",
-		getpid(), node);
-	return lib_getaddrinfo(node, service, hints, res);
+	if (!file) {
+		file = __my_getlog();
+	}
+	ret = lib_getaddrinfo(node, service, hints, res);
+
+	if (ret != 0) {
+		fprintf(file, "Process %d getaddrinfo(%s): %s.\n",
+			getpid(), node, gai_strerror(ret));
+	} else {
+		int i = 0;
+		for(struct addrinfo *p = *res; p != NULL; p = p->ai_next) {
+			i += 1;
+		}
+		fprintf(file, "Process %d getaddrinfo(%s): %d.\n",
+			getpid(), node, i);
+	}
+
+	return ret;
 }
 
