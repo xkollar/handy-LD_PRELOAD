@@ -1,0 +1,9 @@
+{
+  # explicitly list symbols to be exported
+  global:
+    getaddrinfo;
+    gethostbyname;
+  # hide everything else
+  local: *;
+};
+
