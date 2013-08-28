@@ -2,7 +2,7 @@
 #include <dlfcn.h>
 
 __attribute__((visibility("default")))
-SDL_GrabMode SDL_WM_GrabInput(__attribute__((unused)) SDL_GrabMode mode)
+SDL_GrabMode SDL_WM_GrabInput(SDL_GrabMode mode __attribute__((unused)))
 {
         static SDL_GrabMode (*lib_SDL_WM_GrabInput) (SDL_GrabMode mode) = NULL;
         if (!lib_SDL_WM_GrabInput) {
@@ -11,7 +11,8 @@ SDL_GrabMode SDL_WM_GrabInput(__attribute__((unused)) SDL_GrabMode mode)
         return lib_SDL_WM_GrabInput(SDL_GRAB_QUERY);
 }
 
-// int SDL_ShowCursor(int i)
-// {
-//      return 1;
-// }
+__attribute__((visibility("default")))
+int SDL_ShowCursor(int i __attribute__((unused)))
+{
+     return 1;
+}
