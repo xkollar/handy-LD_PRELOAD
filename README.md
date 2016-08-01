@@ -9,3 +9,4 @@ Links
 Some links to other preloadable enhancements.
 
   * [Fake Xinerama](http://home.kde.org/~seli/fakexinerama/) by seli.
+  * [libkeepalive](http://libkeepalive.sourceforge.net/) Fabio Busatto.
