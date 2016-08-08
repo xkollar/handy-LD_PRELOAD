@@ -14,8 +14,8 @@ __attribute__((visibility("internal")))
 FILE *__my_getlog()
 {
 	static FILE *file = NULL;
-        if (!file) {
-                char *name = getenv("RESOLVE_LOG_FILE");
+	if (!file) {
+		char *name = getenv("RESOLVE_LOG_FILE");
 		if (!name) {
 			file = stderr;
 		} else {
@@ -45,23 +45,22 @@ struct hostent *gethostbyname(const char *name)
 {
 	static struct hostent *(*lib_gethostbyname)
 		(const char *name) = NULL;
-        if (!lib_gethostbyname) {
+	if (!lib_gethostbyname) {
 		lib_gethostbyname = __my_loadfun("gethostbyname");
 	}
 	fprintf(__my_getlog(), "Process %d is resolving (gethostbyname): %s\n",
 		getpid(), name);
 	return lib_gethostbyname(name);
-	
 }
 
 __attribute__((visibility("default")))
 int getaddrinfo(const char *node, const char *service,
-                const struct addrinfo *hints,
-                struct addrinfo **res)
+		const struct addrinfo *hints,
+		struct addrinfo **res)
 {
-        static int (*lib_getaddrinfo) (const char *node, const char *service,
-                const struct addrinfo *hints,
-                struct addrinfo **res) = NULL;
+	static int (*lib_getaddrinfo) (const char *node, const char *service,
+		const struct addrinfo *hints,
+		struct addrinfo **res) = NULL;
 	static FILE *file = NULL;
 	int ret;
 
