@@ -10,3 +10,4 @@ Some links to other preloadable enhancements.
 
   * [Fake Xinerama](http://home.kde.org/~seli/fakexinerama/) by seli.
   * [libkeepalive](http://libkeepalive.sourceforge.net/) Fabio Busatto.
+  * [memrestrict](https://github.com/dzeban/restrict-memory/blob/master/memrestrict.c)
